@@ -1,11 +1,8 @@
-```
-portfolio_optimizer/
-├── data_fetcher.py
-├── optimizer.py
-├── risk_assessment.py
-├── backtest.py
-├── main.py
-└── requirements.txt
+# Portfolio Optimizer Micro Framework Plan
+
+This document outlines the structure and purpose of each module within the `portfolio_optimizer` framework.
+
+## Project Structure
 
 
 ---
