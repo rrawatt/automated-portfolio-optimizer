@@ -1,10 +1,9 @@
-# portfolio_optimizer.py
 import pandas as pd
-from metrics import MetricsMixin
-from optimization import OptimizationMixin
-from visualization import VisualizationMixin
-from backtesting import BacktestingMixin
-from utilities import UtilityMixin
+from .metrics import MetricsMixin
+from .optimization import OptimizationMixin
+from .visualization import VisualizationMixin
+from .backtesting import BacktestingMixin
+from .utilities import UtilityMixin
 
 class PortfolioOptimizer(MetricsMixin, 
                          OptimizationMixin, 

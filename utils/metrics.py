@@ -1,6 +1,4 @@
-# metrics.py
 import numpy as np
-import pandas as pd
 
 class MetricsMixin:
     def calculate_portfolio_performance(self, weights):

@@ -1,4 +1,3 @@
-# optimization.py
 import numpy as np
 import scipy.optimize as sco
 from scipy.cluster.hierarchy import linkage, leaves_list

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 class VisualizationMixin:
-    def plot_efficient_frontier(self, num_portfolios=1000):
+    def plot_efficient_frontier(self, num_portfolios=1000, save_path=None):
         """Plot the efficient frontier by simulating random portfolios."""
         results = np.zeros((3, num_portfolios))
         for i in range(num_portfolios):
@@ -20,9 +20,13 @@ class VisualizationMixin:
         plt.ylabel("Annualized Return")
         plt.title("Efficient Frontier")
         plt.colorbar(label="Sharpe Ratio")
-        plt.show()
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
 
-    def plot_portfolio_allocation(self):
+    def plot_portfolio_allocation(self, save_path=None):
         """Plot the current portfolio allocation as a bar chart."""
         if self.weights is None:
             print("Run an optimization method first to get weights.")
@@ -33,9 +37,13 @@ class VisualizationMixin:
         plt.xlabel("Assets")
         plt.ylabel("Weight")
         plt.title("Portfolio Allocation")
-        plt.show()
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
 
-    def plot_risk_contributions(self, weights=None):
+    def plot_risk_contributions(self, weights=None, save_path=None):
         """Plot the risk contributions of each asset."""
         if weights is None:
             weights = self.weights
@@ -49,9 +57,13 @@ class VisualizationMixin:
         plt.xlabel("Assets")
         plt.ylabel("Risk Contribution")
         plt.title("Risk Contributions")
-        plt.show()
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
 
-    def plot_cumulative_returns(self, weights=None):
+    def plot_cumulative_returns(self, weights=None, save_path=None):
         """Plot cumulative portfolio returns over time."""
         if weights is None:
             weights = self.weights
@@ -65,9 +77,13 @@ class VisualizationMixin:
         plt.xlabel("Time")
         plt.ylabel("Cumulative Return")
         plt.title("Cumulative Portfolio Returns")
-        plt.show()
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
 
-    def plot_correlation_matrix(self):
+    def plot_correlation_matrix(self, save_path=None):
         """Plot a heatmap of the asset return correlation matrix."""
         corr = self.returns.corr()
         plt.figure(figsize=(8, 6))
@@ -76,9 +92,13 @@ class VisualizationMixin:
         plt.xticks(range(len(corr)), corr.columns, rotation=90)
         plt.yticks(range(len(corr)), corr.columns)
         plt.title("Correlation Matrix")
-        plt.show()
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
 
-    def simulate_random_portfolios(self, num_portfolios=5000):
+    def simulate_random_portfolios(self, num_portfolios=5000, save_path=None):
         """Simulate random portfolios and plot their risk-return distribution."""
         results = np.zeros((3, num_portfolios))
         weight_records = []
@@ -102,10 +122,14 @@ class VisualizationMixin:
         plt.xlabel("Sharpe Ratio")
         plt.ylabel("Frequency")
         plt.title("Distribution of Sharpe Ratios")
-        plt.show()
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()
         return results, weight_records
 
-    def plot_allocation_over_time(self):
+    def plot_allocation_over_time(self, save_path=None):
         """Plot the evolution of portfolio weights over time."""
         if not self.weight_history:
             print("No allocation history available. Run a backtest first.")
@@ -120,4 +144,8 @@ class VisualizationMixin:
         plt.ylabel("Weight")
         plt.title("Portfolio Allocation Over Time")
         plt.legend()
-        plt.show()
+        if save_path:
+            plt.savefig(save_path)
+            plt.close()
+        else:
+            plt.show()

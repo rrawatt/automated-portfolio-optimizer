@@ -1,4 +1,3 @@
-# backtesting.py
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,6 +6,7 @@ class BacktestingMixin:
     def backtest_portfolio(self, start_date, end_date, train_window=252, rebalance_period=63,
                            optimization_method="max_sharpe", transaction_cost=0.0, benchmark=None):
         """Backtest the portfolio using a rolling window approach."""
+
         bt_data = self.returns.loc[start_date:end_date]
         n = bt_data.shape[0]
         portfolio_returns_list = []
@@ -45,6 +45,11 @@ class BacktestingMixin:
             portfolio_returns_list.append(p_returns)
             prev_weights = weights
             i = test_end
+
+        # Check if any test returns were generated
+        if not portfolio_returns_list:
+            raise ValueError("No test data generated during backtest. "
+                            "Check if your dataset has enough rows for the given train_window and rebalance_period.")
 
         portfolio_returns = pd.concat(portfolio_returns_list).sort_index()
         cumulative_returns = (1 + portfolio_returns).cumprod() - 1
