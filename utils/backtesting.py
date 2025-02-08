@@ -1,12 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from collections import defaultdict
 
 class BacktestingMixin:
     def backtest_portfolio(self, start_date, end_date, train_window=252, rebalance_period=63,
                            optimization_method="max_sharpe", transaction_cost=0.0, benchmark=None):
         """Backtest the portfolio using a rolling window approach."""
 
+        datadic=defaultdict(dict)
         bt_data = self.returns.loc[start_date:end_date]
         n = bt_data.shape[0]
         portfolio_returns_list = []
@@ -75,13 +77,10 @@ class BacktestingMixin:
         plt.legend()
         plt.show()
 
-        print(f"Total Return: {cumulative_returns.iloc[-1]:.2%}")
-        print(f"Annualized Return: {ann_return:.2%}")
-        print(f"Annualized Volatility: {ann_vol:.2%}")
-        print(f"Sharpe Ratio: {sharpe:.2f}")
-        print(f"Maximum Drawdown: {max_drawdown:.2%}")
+        datadic[optimization_method]={'Total Return':cumulative_returns.iloc[-1], 'Annualized Return':ann_return, 'Annualized Volatility':ann_vol, 'Sharpe Ratio':sharpe, 'Maximum Drawdown':max_drawdown}
 
-        return portfolio_returns, cumulative_returns
+
+        return portfolio_returns, cumulative_returns, datadic
 
     def sensitivity_analysis(self, train_windows=[252, 126], rebalance_periods=[63, 21],
                              optimization_method="max_sharpe"):
@@ -89,8 +88,7 @@ class BacktestingMixin:
         results = []
         for tw in train_windows:
             for rp in rebalance_periods:
-                print(f"\nBacktest with train_window = {tw} days, rebalance_period = {rp} days:")
-                pr, cr = self.backtest_portfolio(start_date=self.returns.index[0],
+                pr, cr, res = self.backtest_portfolio(start_date=self.returns.index[0],
                                                  end_date=self.returns.index[-1],
                                                  train_window=tw,
                                                  rebalance_period=rp,
@@ -111,6 +109,5 @@ class BacktestingMixin:
                     "Max Drawdown": max_dd
                 })
         results_df = pd.DataFrame(results)
-        print("\nSensitivity Analysis Results:")
-        print(results_df)
-        return results_df
+        result=results_df.to_dict(orient='dict')
+        return result

@@ -2,9 +2,11 @@
 import argparse
 import pandas as pd
 from utils.portfolio_optimizer import PortfolioOptimizer
+from collections import defaultdict
 
 def main():
     # Define command-line arguments.
+    datares=defaultdict(dict)
     parser = argparse.ArgumentParser(
         description="Portfolio Optimization and Management using PortfolioOptimizer Framework"
     )
@@ -35,6 +37,11 @@ def main():
         action="store_true",
         help="Run sensitivity analysis on training and rebalance window parameters"
     )
+    parser.add_argument(
+        "--llm",
+        action="store_true",
+        help="Give llm analysis of the output"
+    )
     args = parser.parse_args()
 
     # Load asset returns data.
@@ -50,60 +57,65 @@ def main():
     # ---------------------------
     # Run Various Optimizations
     # ---------------------------
-    print("=== Maximum Sharpe Ratio Optimization ===")
+    '''Maximum Sharpe Ratio Optimization'''
     ms_weights, ms_ret, ms_vol = optimizer.maximize_sharpe_ratio()
-    print("Weights:", ms_weights)
-    print(f"Annualized Return: {ms_ret:.2%}, Annualized Volatility: {ms_vol:.2%}\n")
+    datares['Maximum Sharpe Ratio Optimization']['Weights']=ms_weights
+    datares['Maximum Sharpe Ratio Optimization']['Annualized Return']=ms_ret
+    datares['Maximum Sharpe Ratio Optimization']['Annualized Volatility']=ms_vol
 
-    print("=== Minimum Volatility Optimization ===")
+
+    '''Minimum Volatility Optimization'''
     mv_weights, mv_ret, mv_vol = optimizer.minimize_volatility()
-    print("Weights:", mv_weights)
-    print(f"Annualized Return: {mv_ret:.2%}, Annualized Volatility: {mv_vol:.2%}\n")
+    datares['Minimum Volatility Optimization']['Weights']=mv_weights
+    datares['Minimum Volatility Optimization']['Annualized Return']=mv_ret
+    datares['Minimum Volatility Optimization']['Annualized Volatility']=mv_vol
 
-    print("=== Hierarchical Risk Parity (HRP) Optimization ===")
+
+    '''Hierarchical Risk Parity (HRP) Optimization'''
     hrp_weights, hrp_ret, hrp_vol = optimizer.hierarchical_risk_parity()
-    print("Weights:", hrp_weights)
-    print(f"Annualized Return: {hrp_ret:.2%}, Annualized Volatility: {hrp_vol:.2%}\n")
+    datares['Hierarchical Risk Parity Optimization']['Weights']=hrp_weights
+    datares['Hierarchical Risk Parity Optimization']['Annualized Return']=hrp_ret
+    datares['Hierarchical Risk Parity Optimization']['Annualized Volatility']=hrp_vol
 
-    print("=== Equal Risk Contribution (ERC) Optimization ===")
+    '''Equal Risk Contribution (ERC) Optimization'''
     erc_weights, erc_ret, erc_vol = optimizer.equal_risk_contribution()
-    print("Weights:", erc_weights)
-    print(f"Annualized Return: {erc_ret:.2%}, Annualized Volatility: {erc_vol:.2%}\n")
+    datares['Equal Risk Contribution Optimization']['Weights']=erc_weights
+    datares['Equal Risk Contribution Optimization']['Annualized Return']=erc_ret
+    datares['Equal Risk Contribution Optimization']['Annualized Volatility']=erc_vol
 
-    print("=== Equal Weight Portfolio ===")
+    '''Equal Weight Portfolio'''
     eq_weights, eq_ret, eq_vol = optimizer.equal_weight()
-    print("Weights:", eq_weights)
-    print(f"Annualized Return: {eq_ret:.2%}, Annualized Volatility: {eq_vol:.2%}\n")
+    datares['Equal Weight Portfolio']['Weights']=eq_weights
+    datares['Equal Weight Portfolio']['Annualized Return']=eq_ret
+    datares['Equal Weight Portfolio']['Annualized Volatility']=eq_vol
 
-    print("=== Maximum Diversification Optimization ===")
+    '''Maximum Diversification Optimization'''
     md_weights, md_ret, md_vol = optimizer.maximum_diversification()
-    print("Weights:", md_weights)
-    print(f"Annualized Return: {md_ret:.2%}, Annualized Volatility: {md_vol:.2%}\n")
+    datares['Maximum Diversification Optimization']['Weights']=mv_weights
+    datares['Maximum Diversification Optimization']['Annualized Return']=md_ret
+    datares['Maximum Diversification Optimization']['Annualized Volatility']=md_vol
 
-    print("=== Minimum CVaR Optimization ===")
+    '''Minimum CVaR Optimization'''
     mcvar_weights, mcvar_ret, mcvar_vol = optimizer.minimize_cvar(alpha=0.05)
-    print("Weights:", mcvar_weights)
-    print(f"Annualized Return: {mcvar_ret:.2%}, Annualized Volatility: {mcvar_vol:.2%}\n")
+    datares['Minimum CVaR Optimization']['Weights']=mcvar_weights
+    datares['Minimum CVaR Optimization']['Annualized Return']=mcvar_ret
+    datares['Minimum CVaR Optimization']['Annualized Volatility']=mcvar_vol
 
-    # ---------------------------
-    # Optional: Backtesting
-    # ---------------------------
+    '''Backtesting'''
     if args.backtest:
-        print("=== Running Backtest (Max Sharpe) ===")
-        bt_returns, bt_cum = optimizer.backtest_portfolio(
-            start_date=data.index[0],
-            end_date=data.index[-1],
-            train_window=252,
-            rebalance_period=63,
-            optimization_method="max_sharpe",
-            transaction_cost=0.001
-        )
 
-    # ---------------------------
-    # Optional: Visualizations
-    # ---------------------------
+        for i in ['max_sharpe', 'min_vol', 'HRP', 'ERC']:
+            results= optimizer.backtest_portfolio(
+                start_date=data.index[0],
+                end_date=data.index[-1],
+                train_window=252,
+                rebalance_period=63,
+                optimization_method=i,
+                transaction_cost=0.001
+            )
+            datares['backtesting'][i]=results[2]
+    '''Visualization'''
     if args.plots:
-        print("=== Generating Visualizations ===")
         optimizer.plot_efficient_frontier()
         optimizer.plot_portfolio_allocation()
         optimizer.plot_risk_contributions()
@@ -111,16 +123,18 @@ def main():
         optimizer.plot_correlation_matrix()
         optimizer.simulate_random_portfolios()
 
-    # ---------------------------
-    # Optional: Sensitivity Analysis
-    # ---------------------------
+    '''Sensitivity'''
     if args.sensitivity:
-        print("=== Running Sensitivity Analysis ===")
-        optimizer.sensitivity_analysis(
+        
+        sens=optimizer.sensitivity_analysis(
             train_windows=[252, 126],
             rebalance_periods=[63, 21],
             optimization_method="max_sharpe"
         )
+        datares['Sensitivity Analsysis']=sens
+
+    if args.llm:
+        pass
 
 if __name__ == "__main__":
     main()
