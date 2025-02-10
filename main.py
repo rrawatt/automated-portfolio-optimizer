@@ -114,7 +114,7 @@ def main():
                 rebalance_period=63,
                 optimization_method=i,
                 transaction_cost=0.001,
-                save_path=os.path.join(dir, "Backtest_{i}.png")
+                save_path=os.path.join(dir, f"Backtest_{i}.png")
             )
             datares['backtesting'][i] = results[2]
 
@@ -125,7 +125,7 @@ def main():
         optimizer.plot_risk_contributions(save_path=os.path.join(dir, 'risk_contributions.png'))
         optimizer.plot_cumulative_returns(save_path=os.path.join(dir, 'cumulative_returns.png'))
         optimizer.plot_correlation_matrix(save_path=os.path.join(dir, 'correlation_matrixos.png'))
-        optimizer.simulate_random_portfolios(save_path=os.path.join(dir, 'simulate_random_portfolios.png'))
+        optimizer.simulate_random_portfolios(save_patha=os.path.join(dir, 'simulate_random_portfolios.png'), save_pathb=os.path.join(dir, 'distribution_sharpe_ratios.png'))
 
     '''Sensitivity'''
     if args.sensitivity:
@@ -144,6 +144,5 @@ def main():
     else:
         '''create final report without llm'''
         pass
-
 if __name__ == "__main__":
     main()

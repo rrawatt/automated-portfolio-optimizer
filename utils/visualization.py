@@ -1,7 +1,6 @@
 # visualization.py
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 
 class VisualizationMixin:
     def plot_efficient_frontier(self, num_portfolios=1000, save_path=None):
@@ -98,7 +97,7 @@ class VisualizationMixin:
         else:
             plt.show()
 
-    def simulate_random_portfolios(self, num_portfolios=5000, save_path=None):
+    def simulate_random_portfolios(self, num_portfolios=5000, save_patha=None, save_pathb=None):
         """Simulate random portfolios and plot their risk-return distribution."""
         results = np.zeros((3, num_portfolios))
         weight_records = []
@@ -116,14 +115,18 @@ class VisualizationMixin:
         plt.ylabel("Annualized Return")
         plt.title("Random Portfolios Simulation")
         plt.colorbar(label="Sharpe Ratio")
-        plt.show()
+        if save_patha:
+            plt.savefig(save_patha)
+            plt.close()
+        else:
+            plt.show()
         plt.figure(figsize=(10, 6))
         plt.hist(results[2, :], bins=50, color="skyblue", edgecolor="black")
         plt.xlabel("Sharpe Ratio")
         plt.ylabel("Frequency")
         plt.title("Distribution of Sharpe Ratios")
-        if save_path:
-            plt.savefig(save_path)
+        if save_pathb:
+            plt.savefig(save_pathb)
             plt.close()
         else:
             plt.show()
