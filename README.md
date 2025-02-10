@@ -9,4 +9,4 @@ This Python framework provides a modular approach to portfolio optimization, ris
 - **Visualization Tools**: Efficient frontier plotting, risk-return scatter plots, and asset allocation charts.  
 - **Modular Design**: Easily extendable for custom optimization strategies.  
 
-Command: python main.py --data sample_large.csv --riskfree 0.01 --plots --backtest --sensitivity
+Command: python main.py --data sample.csv --riskfree 0.01 --plots --backtest --sensitivity
