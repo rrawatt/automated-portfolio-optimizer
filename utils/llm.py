@@ -16,7 +16,7 @@ def generate_insights(results: dict) -> str:
     prompt = (
         '''You are a seasoned financial analyst. Please analyze the following portfolio optimization results
         and provide detailed insights on performance, risk factors, diversification, and potential areas for improvement.\n\n
-        GIVE THE OUTPUT IN A STRUCTRURE FORM'''
+        GIVE THE OUTPUT IN A STRUCTURED FORM. '''
     )
     prompt += json.dumps(results, indent=2)
 

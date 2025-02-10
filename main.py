@@ -134,7 +134,10 @@ def main():
     '''LLM Analysis using GPT O3 Mini'''
     if args.llm:
         insights = generate_insights(datares)
-        
+        '''include insights in final report'''
+    else:
+        '''create final report without llm'''
+        pass
 
 if __name__ == "__main__":
     main()
