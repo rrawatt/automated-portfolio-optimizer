@@ -1,12 +1,16 @@
 #!/usr/bin/env python
+import os
 import argparse
 import pandas as pd
 from collections import defaultdict
 from utils.portfolio_optimizer import PortfolioOptimizer
 from utils.llm import generate_insights
 
+
 def main():
+    dir = os.path.dirname(os.path.realpath(__file__))
     # Define command-line arguments.
+    
     datares = defaultdict(dict)
     parser = argparse.ArgumentParser(
         description="Portfolio Optimization and Management using PortfolioOptimizer Framework"
@@ -109,18 +113,19 @@ def main():
                 train_window=252,
                 rebalance_period=63,
                 optimization_method=i,
-                transaction_cost=0.001
+                transaction_cost=0.001,
+                save_path=os.path.join(dir, "Backtest_{i}.png")
             )
             datares['backtesting'][i] = results[2]
 
     '''Visualization'''
     if args.plots:
-        optimizer.plot_efficient_frontier()
-        optimizer.plot_portfolio_allocation()
-        optimizer.plot_risk_contributions()
-        optimizer.plot_cumulative_returns()
-        optimizer.plot_correlation_matrix()
-        optimizer.simulate_random_portfolios()
+        optimizer.plot_efficient_frontier(save_path=os.path.join(dir, 'efficient_frontier.png'))
+        optimizer.plot_portfolio_allocation(save_path=os.path.join(dir, 'portfolio_allocation.png'))
+        optimizer.plot_risk_contributions(save_path=os.path.join(dir, 'risk_contributions.png'))
+        optimizer.plot_cumulative_returns(save_path=os.path.join(dir, 'cumulative_returns.png'))
+        optimizer.plot_correlation_matrix(save_path=os.path.join(dir, 'correlation_matrixos.png'))
+        optimizer.simulate_random_portfolios(save_path=os.path.join(dir, 'simulate_random_portfolios.png'))
 
     '''Sensitivity'''
     if args.sensitivity:
@@ -132,6 +137,7 @@ def main():
         datares['Sensitivity Analsysis'] = sens
 
     '''LLM Analysis using GPT O3 Mini'''
+    
     if args.llm:
         insights = generate_insights(datares)
         '''include insights in final report'''
