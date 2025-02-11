@@ -3,6 +3,7 @@ import scipy.optimize as sco
 from scipy.cluster.hierarchy import linkage, leaves_list
 from scipy.spatial.distance import squareform
 
+
 class OptimizationMixin:
     def minimize_volatility(self):
         """Optimize portfolio to minimize volatility."""
