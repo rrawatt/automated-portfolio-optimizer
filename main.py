@@ -5,6 +5,8 @@ import pandas as pd
 from collections import defaultdict
 from utils.portfolio_optimizer import PortfolioOptimizer
 from utils.llm import generate_insights
+from utils.tickers import ticker_data
+from datetime import datetime
 
 
 def main():
@@ -15,11 +17,18 @@ def main():
     parser = argparse.ArgumentParser(
         description="Portfolio Optimization and Management using PortfolioOptimizer Framework"
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group(required=True)
+
+    group.add_argument(
         "--data",
         type=str,
-        required=True,
         help="Path to CSV file containing asset returns (dates as index)"
+    )
+    group.add_argument(
+        "--tickers",
+        type=str,
+        nargs="+",
+        help="List of tickers to include in the analysis"
     )
     parser.add_argument(
         "--riskfree",
@@ -47,14 +56,35 @@ def main():
         action="store_true",
         help="Generate LLM analysis of the output using GPT O3 Mini"
     )
+    parser.add_argument(
+        "--start",
+        type=str,
+        required=True,
+        help="Start date for data retrieval (required if --tickers is provided)"
+    )
+    parser.add_argument(
+        "--end",
+        type=str,
+        required=True,
+        help="End date for data retrieval (required if --tickers is provided)"
+    )
+    
     args = parser.parse_args()
-
     # Load asset returns data.
-    try:
-        data = pd.read_csv(args.data, index_col=0, parse_dates=True)
-    except Exception as e:
-        print(f"Error loading data: {e}")
-        return
+    if args.data:
+        try:
+            data = pd.read_csv(args.data, index_col=0, parse_dates=True)
+        except Exception as e:
+            print(f"Error loading data: {e}")
+            return
+    elif args.tickers:
+        #TODO THIS
+
+        if not args.start or not args.end:
+            parser.error("--start and --end are required when --tickers is provided")
+
+            
+
 
     # Initialize the PortfolioOptimizer with the provided data and risk-free rate.
     optimizer = PortfolioOptimizer(data, risk_free_rate=args.riskfree)
@@ -144,5 +174,7 @@ def main():
     else:
         '''create final report without llm'''
         pass
+
+    print(datares)
 if __name__ == "__main__":
     main()
