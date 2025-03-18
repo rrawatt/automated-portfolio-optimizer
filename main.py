@@ -1,17 +1,15 @@
-#!/usr/bin/env python
 import os
 import argparse
 import pandas as pd
 from collections import defaultdict
 from utils.portfolio_optimizer import PortfolioOptimizer
 from utils.llm import generate_insights
-from utils.tickers import ticker_data
-from datetime import datetime
+from utils.tickers import TickerData
 
 
 def main():
     dir = os.path.dirname(os.path.realpath(__file__))
-    # Define command-line arguments.
+    os.makedirs("plots", exist_ok=True)
     
     datares = defaultdict(dict)
     parser = argparse.ArgumentParser(
@@ -70,7 +68,7 @@ def main():
     )
     
     args = parser.parse_args()
-    # Load asset returns data.
+
     if args.data:
         try:
             data = pd.read_csv(args.data, index_col=0, parse_dates=True)
@@ -78,15 +76,16 @@ def main():
             print(f"Error loading data: {e}")
             return
     elif args.tickers:
-        #TODO THIS
 
         if not args.start or not args.end:
             parser.error("--start and --end are required when --tickers is provided")
+        try:
+            tick=TickerData(args.tickers, args.start, args.end)
+            data = tick.ticker_data()
+        except Exception as e:
+            print(f"Error loading data: {e}")
+            return
 
-            
-
-
-    # Initialize the PortfolioOptimizer with the provided data and risk-free rate.
     optimizer = PortfolioOptimizer(data, risk_free_rate=args.riskfree)
 
     # ---------------------------
@@ -144,18 +143,18 @@ def main():
                 rebalance_period=63,
                 optimization_method=i,
                 transaction_cost=0.001,
-                save_path=os.path.join(dir, f"Backtest_{i}.png")
+                save_path=os.path.join(dir, f"plots/Backtest_{i}.png")
             )
             datares['backtesting'][i] = results[2]
 
     '''Visualization'''
     if args.plots:
-        optimizer.plot_efficient_frontier(save_path=os.path.join(dir, 'efficient_frontier.png'))
-        optimizer.plot_portfolio_allocation(save_path=os.path.join(dir, 'portfolio_allocation.png'))
-        optimizer.plot_risk_contributions(save_path=os.path.join(dir, 'risk_contributions.png'))
-        optimizer.plot_cumulative_returns(save_path=os.path.join(dir, 'cumulative_returns.png'))
-        optimizer.plot_correlation_matrix(save_path=os.path.join(dir, 'correlation_matrixos.png'))
-        optimizer.simulate_random_portfolios(save_patha=os.path.join(dir, 'simulate_random_portfolios.png'), save_pathb=os.path.join(dir, 'distribution_sharpe_ratios.png'))
+        optimizer.plot_efficient_frontier(save_path=os.path.join(dir, 'plots/efficient_frontier.png'))
+        optimizer.plot_portfolio_allocation(save_path=os.path.join(dir, 'plots/portfolio_allocation.png'))
+        optimizer.plot_risk_contributions(save_path=os.path.join(dir, 'plots/risk_contributions.png'))
+        optimizer.plot_cumulative_returns(save_path=os.path.join(dir, 'plots/cumulative_returns.png'))
+        optimizer.plot_correlation_matrix(save_path=os.path.join(dir, 'plots/correlation_matrixos.png'))
+        optimizer.simulate_random_portfolios(save_patha=os.path.join(dir, 'plots/simulate_random_portfolios.png'), save_pathb=os.path.join(dir, 'plots/distribution_sharpe_ratios.png'))
 
     '''Sensitivity'''
     if args.sensitivity:

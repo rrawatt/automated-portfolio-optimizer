@@ -27,5 +27,4 @@ class TickerData:
             return f"Invalid tickers: {self.check_tickers()}"
         else:
             data = yf.download(self.tickers, start=self.start_date, end=self.end_date)
-            return data
-    
+            return data['Close']

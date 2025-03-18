@@ -16,7 +16,9 @@ def generate_insights(results: dict) -> str:
     prompt = (
         '''You are a seasoned financial analyst. Please analyze the following portfolio optimization results
         and provide detailed insights on performance, risk factors, diversification, and potential areas for improvement.\n\n
-        GIVE THE OUTPUT IN A STRUCTURED FORM. '''
+        Give the output in a structured markdown syntax, only the syntax, so that it can be automatically converted. Following are the placeholder for
+        .png that are stored locally, efficient_frontier.png, portfolio_allocation.png, risk_contributions.png, cumulative_returns.png, correlation_matrix.png, simulate_random_portfolios.png, distribution_sharpe_ratios.png, Backtest_max_sharpe.png, Backtest_min_vol.png, Backtest_HRP.png, Backtest_ERC.png\n\n
+        '''
     )
     prompt += json.dumps(results, indent=2)
 
