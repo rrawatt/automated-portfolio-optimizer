@@ -1,3 +1,22 @@
+"""
+Module: report.py
+
+Purpose:
+    Generates a markdown report that summarizes the results of the portfolio optimization and backtesting.
+    The report includes key performance metrics, portfolio weights, and placeholders for various plots.
+
+Functions:
+    - generate_report(res, tickers):
+          Creates a detailed markdown report that includes:
+            * A header with the generation timestamp.
+            * Sections for each portfolio optimization method, describing the approach and key metrics.
+            * A table summarizing backtesting results across multiple optimization methods.
+            * A sensitivity analysis section that explores the impact of varying train windows and rebalance periods.
+            * A conclusion with recommendations.
+          The function writes the report to a file named "report.md" and prints a confirmation message.
+"""
+
+
 import os
 from datetime import datetime
 import urllib.parse
@@ -6,6 +25,11 @@ def generate_report(res, tickers):
   plots_dir = "/plots"
   report = ""
 
+  for i in range(1, len(tickers)+1):
+     report += f"| {i} | {tickers[i]} | \n"
+  
+  report+="""**Correlation Matrix:**  
+  ![Correlation Matrix]({plots_dir}/correl_mat.png)"""
   now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
   
   def format_weights(weights):

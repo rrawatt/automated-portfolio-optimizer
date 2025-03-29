@@ -1,3 +1,30 @@
+"""
+Module: visualization.py
+
+Purpose:
+    Provides functions for visualizing portfolio analysis results using Plotly. It includes plots for efficient frontier,
+    portfolio allocation, risk contributions, cumulative returns, correlation matrix, and simulation of random portfolios.
+
+Classes:
+    VisualizationMixin:
+        Methods:
+            - plot_efficient_frontier(num_portfolios=1000):
+                  Simulates a number of random portfolios and plots the efficient frontier (risk-return trade-off)
+                  along with a color gradient representing the Sharpe ratio.
+            - plot_portfolio_allocation():
+                  Generates bar charts showing the portfolio allocation based on stored weights.
+            - plot_risk_contributions():
+                  Creates bar charts of the risk contributions from each asset using the current portfolio weights.
+            - plot_cumulative_returns():
+                  Plots the cumulative returns of the portfolio over time using stored weights.
+            - plot_correlation_matrix():
+                  Creates a heatmap of the correlation matrix computed from asset returns.
+            - simulate_random_portfolios(num_portfolios=5000):
+                  Simulates a large number of random portfolios, plotting both the risk-return scatter plot
+                  and a histogram of Sharpe ratios.
+"""
+
+
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go

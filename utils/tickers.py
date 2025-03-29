@@ -1,3 +1,27 @@
+"""
+Module: tickers.py
+
+Purpose:
+    Handles the retrieval and validation of financial ticker data using the yfinance library.
+    Downloads historical price data and converts it into returns while addressing outliers.
+
+Classes:
+    TickerData:
+        Constructor:
+            - __init__(tickers, start_date, end_date):
+                  Initializes the instance with a list of ticker symbols and a date range.
+        Methods:
+            - check_ticker(ticker_symbol):
+                  Checks if a given ticker symbol is valid by attempting to access its information.
+            - check_tickers():
+                  Iterates over all tickers and returns a list of invalid ones, if any.
+            - ticker_data():
+                  If all tickers are valid, downloads historical price data for the tickers,
+                  computes daily returns from closing prices, identifies outliers using z-scores,
+                  and replaces outliers with the column mean. Returns the processed returns DataFrame.
+"""
+
+
 import yfinance as yf
 import pandas as pd
 import numpy as np

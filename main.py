@@ -176,6 +176,7 @@ def main():
             save_fig(rc[i], f"plots/{i}_risk_contributions.png")
         for i in cr.keys():
             save_fig(cr[i], f"plots/{i}_cumulative_returns.png")
+        save_fig(cm, f"plots/correl_mat.png")
         save_fig(sdr[0], "plots/simulate_random_portfolios.png")
         save_fig(sdr[1], "plots/distribution_sharpe_ratios.png")
         '''

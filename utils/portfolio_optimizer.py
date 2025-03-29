@@ -1,3 +1,23 @@
+"""
+Module: portfolio_optimizer.py
+
+Purpose:
+    Integrates multiple mixin classes to create a comprehensive PortfolioOptimizer class.
+    This class is responsible for managing asset returns, performing optimizations, backtesting, visualization,
+    metrics calculations, and various utility functions.
+
+Classes:
+    PortfolioOptimizer (inherits from MetricsMixin, OptimizationMixin, VisualizationMixin, BacktestingMixin, UtilityMixin):
+        Constructor:
+            - __init__(returns, risk_free_rate, cov_estimator):
+                  Initializes the optimizer with asset return data, sets the risk-free rate, and computes the covariance matrix.
+                  Ensures that the returns have a DateTime index and are sorted chronologically.
+        Methods:
+            - add_weights(opt):
+                  Adds the computed weights from a given optimization method to an internal dictionary (weight_list) for further use.
+"""
+
+
 import pandas as pd
 from .metrics import MetricsMixin
 from .optimization import OptimizationMixin

@@ -1,4 +1,20 @@
-# utilities.py
+"""
+Module: utilities.py
+
+Purpose:
+    Provides utility functions and mixins that support various operations across the codebase,
+    including the calculation of portfolio turnover and saving Plotly figures as images.
+
+Classes and Functions:
+    UtilityMixin:
+        Methods:
+            - calculate_turnover(old_weights, new_weights):
+                  Computes the turnover between two sets of portfolio weights by calculating the half-sum of the absolute differences.
+    save_fig(fig, filepath):
+        Attempts to save a Plotly figure to an image file using Kaleido. If the primary method fails,
+        it falls back to an alternative method to save the image, and prints messages indicating success or failure.
+"""
+
 import numpy as np
 
 class UtilityMixin:

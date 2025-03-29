@@ -1,3 +1,33 @@
+"""
+Module: metrics.py
+
+Purpose:
+    Provides functions to calculate key performance metrics for a portfolio, including annualized return,
+    volatility, Sharpe ratio, Sortino ratio, maximum drawdown, Value at Risk (VaR), and Conditional VaR (CVaR).
+
+Classes:
+    MetricsMixin:
+        Methods:
+            - _portfolio_performance(weights):
+                  Computes unrounded annualized return and volatility based on the portfolio's returns.
+            - calculate_portfolio_performance(weights):
+                  Returns the rounded annualized return and volatility for reporting purposes.
+            - _sharpe_ratio(weights):
+                  Computes the unrounded Sharpe ratio using the portfolio’s performance and risk-free rate.
+            - calculate_sharpe_ratio(weights):
+                  Returns the rounded Sharpe ratio.
+            - _sortino_ratio(weights, target_return):
+                  Computes the unrounded Sortino ratio based on the portfolio’s returns.
+            - calculate_sortino_ratio(weights, target_return):
+                  Returns the rounded Sortino ratio.
+            - calculate_max_drawdown(weights):
+                  Calculates the maximum drawdown of the portfolio based on its cumulative returns.
+            - calculate_var(weights, alpha):
+                  Computes the Value at Risk (VaR) for the portfolio.
+            - calculate_cvar(weights, alpha):
+                  Computes the Conditional Value at Risk (CVaR) using the portfolio returns.
+"""
+
 import numpy as np
 
 def _to_float(x):

@@ -1,3 +1,41 @@
+"""
+Module: optimization.py
+
+Purpose:
+    Implements various portfolio optimization techniques and helper functions. The module provides methods to optimize
+    portfolios based on different objectives such as minimizing volatility, maximizing the Sharpe ratio, minimizing CVaR,
+    constructing equal weight portfolios, Hierarchical Risk Parity (HRP), maximum diversification, and Equal Risk Contribution (ERC).
+
+Classes:
+    OptimizationMixin:
+        Methods:
+            - _get_default_optimization_setup():
+                  Sets up constraints, bounds, and initial guess for the optimization problem.
+            - _optimize(objective):
+                  General-purpose optimization routine that minimizes the given objective function under the default setup.
+            - minimize_volatility():
+                  Optimizes the portfolio weights to minimize the portfolio volatility.
+            - maximize_sharpe_ratio():
+                  Optimizes the portfolio weights to maximize the Sharpe ratio (by minimizing the negative Sharpe).
+            - minimize_cvar(alpha):
+                  Optimizes the portfolio to minimize Conditional Value at Risk (CVaR).
+            - equal_weight():
+                  Constructs a portfolio with equal weights for all assets.
+            - hierarchical_risk_parity():
+                  Implements the HRP method by clustering assets based on correlations and allocating risk evenly among clusters.
+            - maximum_diversification():
+                  Optimizes the portfolio by maximizing the diversification ratio.
+            - equal_risk_contribution():
+                  Optimizes the portfolio by equalizing the risk contributions across all assets.
+            - _calculate_cluster_risk(indices):
+                  Computes the risk for a given cluster of assets.
+            - _erc_objective(weights):
+                  Defines the objective function for the Equal Risk Contribution optimization.
+            - _calculate_risk_contributions(weights):
+                  Calculates the contribution of each asset to the overall portfolio risk.
+"""
+
+
 import numpy as np
 import scipy.optimize as sco
 from scipy.cluster.hierarchy import linkage, leaves_list
