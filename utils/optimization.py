@@ -3,27 +3,41 @@ import scipy.optimize as sco
 from scipy.cluster.hierarchy import linkage, leaves_list
 from scipy.spatial.distance import squareform
 
-
 class OptimizationMixin:
-    def minimize_volatility(self):
-        """Optimize portfolio to minimize volatility."""
+    def _get_default_optimization_setup(self):
         constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}
         bounds = tuple((0, 1) for _ in range(self.num_assets))
         init_guess = np.array([1.0 / self.num_assets] * self.num_assets)
-        result = sco.minimize(lambda x: self.calculate_portfolio_performance(x)[1],
-                              init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
+        return constraints, bounds, init_guess
+
+    def _optimize(self, objective):
+        constraints, bounds, init_guess = self._get_default_optimization_setup()
+        result = sco.minimize(objective, init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
         self.weights = result.x
         return self.weights, *self.calculate_portfolio_performance(self.weights)
+
+    def minimize_volatility(self):
+        """Optimize portfolio to minimize volatility."""
+        # Use the unrounded volatility from _portfolio_performance
+        return self._optimize(lambda x: self._portfolio_performance(x)[1])
 
     def maximize_sharpe_ratio(self):
         """Optimize portfolio to maximize Sharpe ratio."""
-        constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}
-        bounds = tuple((0, 1) for _ in range(self.num_assets))
-        init_guess = np.array([1.0 / self.num_assets] * self.num_assets)
-        result = sco.minimize(lambda x: -self.calculate_sharpe_ratio(x),
-                              init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
-        self.weights = result.x
-        return self.weights, *self.calculate_portfolio_performance(self.weights)
+        # Use the unrounded Sharpe ratio (note the negative sign for maximization)
+        return self._optimize(lambda x: -self._sharpe_ratio(x))
+
+    def minimize_cvar(self, alpha=0.05):
+        """Optimize portfolio to minimize Conditional VaR.
+        Note: Here we still use calculate_cvar, assuming the rounding only affects reporting.
+        If needed, you can similarly create an unrounded version for optimization.
+        """
+        return self._optimize(lambda x: self.calculate_cvar(x, alpha))
+
+    def equal_weight(self):
+        """Construct an equal weight portfolio."""
+        weights = np.array([1.0 / self.num_assets] * self.num_assets)
+        self.weights = weights
+        return self.weights, *self.calculate_portfolio_performance(weights)
 
     def hierarchical_risk_parity(self):
         """Optimize portfolio using Hierarchical Risk Parity (HRP)."""
@@ -51,53 +65,20 @@ class OptimizationMixin:
                 clusters.append(right)
         weights /= np.sum(weights)
         self.weights = weights
-        return self.weights, *self.calculate_portfolio_performance(self.weights)
-
-    def equal_risk_contribution(self):
-        """Optimize portfolio using Equal Risk Contribution (ERC)."""
-        constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}
-        bounds = tuple((0, 1) for _ in range(self.num_assets))
-        init_guess = np.array([1.0 / self.num_assets] * self.num_assets)
-        result = sco.minimize(lambda x: self._erc_objective(x),
-                              init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
-        self.weights = result.x
-        return self.weights, *self.calculate_portfolio_performance(self.weights)
-
-    def minimize_cvar(self, alpha=0.05):
-        """Optimize portfolio to minimize Conditional VaR."""
-        constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}
-        bounds = tuple((0, 1) for _ in range(self.num_assets))
-        init_guess = np.array([1.0 / self.num_assets] * self.num_assets)
-        result = sco.minimize(lambda w: self.calculate_cvar(w, alpha), 
-                              init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
-        self.weights = result.x
-        return self.weights, *self.calculate_portfolio_performance(self.weights)
-
-    def equal_weight(self):
-        """Construct an equal weight portfolio."""
-        weights = np.array([1.0 / self.num_assets] * self.num_assets)
-        self.weights = weights
-        return self.weights, *self.calculate_portfolio_performance(self.weights)
+        return self.weights, *self.calculate_portfolio_performance(weights)
 
     def maximum_diversification(self):
         """Optimize portfolio by maximizing the diversification ratio."""
         sigma = self.returns.std() * np.sqrt(252)
         def objective(w):
             port_vol = np.sqrt(np.dot(w.T, np.dot(self.cov_matrix, w)))
-            return - np.dot(w, sigma) / port_vol  # Negative for maximization
-        constraints = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1}
-        bounds = tuple((0, 1) for _ in range(self.num_assets))
-        init_guess = np.array([1.0 / self.num_assets] * self.num_assets)
-        result = sco.minimize(objective, init_guess, method='SLSQP', bounds=bounds, constraints=constraints)
-        self.weights = result.x
-        return self.weights, *self.calculate_portfolio_performance(self.weights)
+            return -np.dot(w, sigma) / port_vol  # Negative for maximization
+        return self._optimize(objective)
 
-    def optimize_black_litterman(self, views=None, tau=0.025):
-        """Stub for Black–Litterman optimization."""
-        print("Black–Litterman optimization not fully implemented. Returning max_sharpe results.")
-        return self.maximize_sharpe_ratio()
+    def equal_risk_contribution(self):
+        """Optimize portfolio using Equal Risk Contribution (ERC)."""
+        return self._optimize(lambda x: self._erc_objective(x))
 
-    # --- Helper Methods ---
     def _calculate_cluster_risk(self, indices):
         cov = self.returns.cov() * 252
         cluster_weights = np.ones(len(indices))

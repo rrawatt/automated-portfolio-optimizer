@@ -21,8 +21,19 @@ class PortfolioOptimizer(MetricsMixin,
         self.risk_free_rate = risk_free_rate
         self.num_assets = self.returns.shape[1]
         self.weights = None
+        '''self.weights_sr = None
+        self.weights_vo = None
+        self.weights_hrp = None
+        self.weights_erc = None
+        self.weights_eq = None
+        self.weights_mdo = None
+        self.weights_cvar = None'''
         self.weight_history = {}
+        self.weight_list={}
         if cov_estimator is None:
             self.cov_matrix = self.returns.cov() * 252
         else:
             self.cov_matrix = cov_estimator(self.returns)
+
+    def add_weights(self, opt):
+        self.weight_list[opt]=self.weights
