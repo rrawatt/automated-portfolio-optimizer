@@ -41,13 +41,6 @@ class PortfolioOptimizer(MetricsMixin,
         self.risk_free_rate = risk_free_rate
         self.num_assets = self.returns.shape[1]
         self.weights = None
-        '''self.weights_sr = None
-        self.weights_vo = None
-        self.weights_hrp = None
-        self.weights_erc = None
-        self.weights_eq = None
-        self.weights_mdo = None
-        self.weights_cvar = None'''
         self.weight_history = {}
         self.weight_list={}
         if cov_estimator is None:
