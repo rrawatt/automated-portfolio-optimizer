@@ -179,13 +179,6 @@ def main():
         save_fig(cm, f"plots/correl_mat.png")
         save_fig(sdr[0], "plots/simulate_random_portfolios.png")
         save_fig(sdr[1], "plots/distribution_sharpe_ratios.png")
-        '''
-        save_fig(optimizer.plot_portfolio_allocation(), "plots/portfolio_allocation.png")
-        save_fig(optimizer.plot_risk_contributions(), "plots/risk_contributions.png")
-        save_fig(optimizer.plot_cumulative_returns(), "plots/cumulative_returns.png")
-        save_fig(optimizer.plot_correlation_matrix(), "plots/correlation_matrix.png")
-        save_fig(optimizer.simulate_random_portfolios()[0], "plots/simulate_random_portfolios.png")
-        save_fig(optimizer.simulate_random_portfolios()[1], "plots/distribution_sharpe_ratios.png")'''
         
     '''Sensitivity'''
     if args.sensitivity:
