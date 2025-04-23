@@ -53,9 +53,31 @@ class MetricsMixin:
             return 0.001
         return (ret - self.risk_free_rate) / vol
 
+    def calculate_cvar(self, weights, alpha=0.05):
+        port_returns = self.returns @ weights
+        var = self.calculate_var(weights, alpha)
+        cvar_values = port_returns[port_returns <= var]
+        if len(cvar_values) == 0:
+            return 0.001
+        return _to_float(np.mean(cvar_values))
+    
     def calculate_sharpe_ratio(self, weights):
         return _to_float(self._sharpe_ratio(weights))
 
+    def _calculate_cluster_risk(self, indices):
+        cov = self.returns.cov() * 252
+        cluster_weights = np.ones(len(indices))
+        cluster_weights /= np.sum(cluster_weights)
+        cluster_cov = cov.iloc[indices, indices]
+        risk = np.sqrt(np.dot(cluster_weights.T, np.dot(cluster_cov, cluster_weights)))
+        return risk
+    
+    def _calculate_risk_contributions(self, weights):
+        cov_matrix = self.returns.cov() * 252
+        port_vol = np.sqrt(np.dot(weights.T, np.dot(cov_matrix, weights)))
+        marginal = np.dot(cov_matrix, weights) / port_vol
+        return weights * marginal
+    
     def _sortino_ratio(self, weights, target_return=0.0):
         """Calculate unrounded Sortino ratio using unrounded performance metrics."""
         ret, _ = self._portfolio_performance(weights)
@@ -80,10 +102,4 @@ class MetricsMixin:
         port_returns = self.returns @ weights
         return _to_float(np.percentile(port_returns, alpha * 100))
 
-    def calculate_cvar(self, weights, alpha=0.05):
-        port_returns = self.returns @ weights
-        var = self.calculate_var(weights, alpha)
-        cvar_values = port_returns[port_returns <= var]
-        if len(cvar_values) == 0:
-            return 0.001
-        return _to_float(np.mean(cvar_values))
+    
