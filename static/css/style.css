@@ -1,0 +1,142 @@
+/* ===== Global ===== */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f9fc;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* ===== Navbar (from earlier) ===== */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 0.75rem 1.5rem;
+  }
+  .navbar__brand a {
+    color: #fff;
+    font-size: 1.5rem;
+    text-decoration: none;
+  }
+  .navbar__menu {
+    list-style: none;
+    display: flex;
+  }
+  .navbar__menu li + li {
+    margin-left: 1rem;
+  }
+  .navbar__menu a {
+    color: #ddd;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s;
+  }
+  .navbar__menu a:hover {
+    color: #fff;
+  }
+  
+  /* ===== Form Container ===== */
+  .form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .form-container h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    text-align: center;
+    color: #222;
+  }
+  
+  /* ===== Form Layout ===== */
+  .opt-form .form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .opt-form .form-row {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .opt-form .half-width {
+    flex: 1;
+  }
+  
+  .opt-form label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 0.95rem;
+  }
+  
+  .opt-form input[type="text"],
+  .opt-form input[type="date"],
+  .opt-form input[type="number"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .opt-form input:focus {
+    border-color: #5b9df9;
+    box-shadow: 0 0 0 2px rgba(91,157,249,0.2);
+    outline: none;
+  }
+  
+  /* ===== Fieldset for checkboxes ===== */
+  .opt-form fieldset {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .opt-form legend {
+    padding: 0 0.5rem;
+    font-weight: bold;
+  }
+  
+  .opt-form fieldset label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: normal;
+  }
+  
+  /* ===== Button ===== */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #5b9df9;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #4a8ce0;
+  }
+  
+  /* ===== Responsive ===== */
+  @media (max-width: 600px) {
+    .opt-form .form-row {
+      flex-direction: column;
+    }
+  }
+  /* Increase tab content spacing */
+.tab-content {
+  margin-top: 1rem;
+}

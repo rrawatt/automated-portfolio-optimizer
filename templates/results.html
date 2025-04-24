@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4">Analysis Report</h2>
+<ul class="nav nav-tabs" id="resultsTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="opt-tab" data-bs-toggle="tab" data-bs-target="#opt" type="button"
+            role="tab">Optimization</button>
+  </li>
+  {% if viz.alg %}
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="plots-tab" data-bs-toggle="tab" data-bs-target="#plots" type="button"
+            role="tab">Plots</button>
+  </li>
+  {% endif %}
+  {% if back %}
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="back-tab" data-bs-toggle="tab" data-bs-target="#back" type="button"
+            role="tab">Backtest</button>
+  </li>
+  {% endif %}
+  {% if sens %}
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="sens-tab" data-bs-toggle="tab" data-bs-target="#sens" type="button"
+            role="tab">Sensitivity</button>
+  </li>
+  {% endif %}
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="concl-tab" data-bs-toggle="tab" data-bs-target="#concl" type="button"
+            role="tab">Conclusion</button>
+  </li>
+</ul>
+<div class="tab-content pt-3" id="resultsTabsContent">
+  <!-- Optimization Tab -->
+  <div class="tab-pane fade show active" id="opt" role="tabpanel">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      {% for name, data in opt.items() %}
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5>{{ name }}</h5>
+            <small class="text-muted d-block">{{ data.description }}</small>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item"><strong>Ann. Return:</strong> {{ data.return }}</li>
+              <li class="list-group-item"><strong>Ann. Volatility:</strong> {{ data.volatility }}</li>
+            </ul>
+            <h6>Weights (%)</h6>
+            <table class="table table-sm">
+              <thead><tr><th>Asset</th><th>Weight</th></tr></thead>
+              <tbody>
+                {% for t, w in data.weights.items() %}
+                <tr><td>{{ t }}</td><td>{{ w }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Plots Tab -->
+  {% if viz.alg %}
+  <div class="tab-pane fade" id="plots" role="tabpanel">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      {% for name, imgs in viz.alg.items() %}
+      <div class="col">
+        <div class="card">
+          <div class="card-header"><strong>{{ name }}</strong></div>
+          <div class="card-body">
+            <img src="{{ imgs.cumulative }}" class="img-fluid mb-2" alt="Cumulative">
+            <img src="{{ imgs.allocation }}" class="img-fluid mb-2" alt="Allocation">
+            <img src="{{ imgs.risk }}" class="img-fluid" alt="Risk">
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% if viz.correlation %}
+      <div class="col">
+        <div class="card">
+          <div class="card-header"><strong>Correlation Matrix</strong></div>
+          <div class="card-body">
+            <img src="{{ viz.correlation }}" class="img-fluid" alt="Correlation">
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% if viz.random.scatter %}
+      <div class="col">
+        <div class="card">
+          <div class="card-header"><strong>Random Simulation</strong></div>
+          <div class="card-body">
+            <img src="{{ viz.random.scatter }}" class="img-fluid mb-2" alt="Scatter">
+            <img src="{{ viz.random.histogram }}" class="img-fluid" alt="Histogram">
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Backtest Tab -->
+  {% if back %}
+  <div class="tab-pane fade" id="back" role="tabpanel">
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Method</th><th>Total Return</th><th>Ann. Return</th><th>Ann. Vol</th>
+            <th>Sharpe</th><th>Max Drawdown</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for name, stats in back.items() %}
+          <tr>
+            <td>{{ name }}</td>
+            <td>{{ stats['Total Return'] }}</td>
+            <td>{{ stats['Annualized Return'] }}</td>
+            <td>{{ stats['Annualized Volatility'] }}</td>
+            <td>{{ stats['Sharpe Ratio'] }}</td>
+            <td>{{ stats['Maximum Drawdown'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sensitivity Tab -->
+  {% if sens %}
+  <div class="tab-pane fade" id="sens" role="tabpanel">
+    <div class="table-responsive">
+      <table class="table table-bordered table-sm">
+        <thead class="table-light">
+          <tr>
+            <th>Method</th><th>Train Win</th><th>Reb Period</th>
+            <th>Ann. Ret</th><th>Ann. Vol</th><th>Sharpe</th><th>Max DD</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for name, data in sens.items() %}
+            {% for i in range(data['Train Window']|length) %}
+            <tr>
+              <td>{{ name }}</td>
+              <td>{{ data['Train Window'][i] }}</td>
+              <td>{{ data['Rebalance Period'][i] }}</td>
+              <td>{{ "%.3f"|format(data['Annualized Return'][i]) }}</td>
+              <td>{{ "%.3f"|format(data['Annualized Volatility'][i]) }}</td>
+              <td>{{ "%.3f"|format(data['Sharpe Ratio'][i]) }}</td>
+              <td>{{ "%.3f"|format(data['Max Drawdown'][i]) }}</td>
+            </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Conclusion Tab -->
+  <div class="tab-pane fade" id="concl" role="tabpanel">
+    <div class="alert alert-secondary">
+      <h5>Key Takeaways</h5>
+      <ul>
+        <li><strong>Sharpe Ratio:</strong> Highest for the Max-Sharpe strategy.</li>
+        <li><strong>Volatility:</strong> Lowest for the Min-Vol strategy.</li>
+        <li><strong>Diversification:</strong> HRP and ERC evenly spread risk.</li>
+        <li>Review backtesting & sensitivity results to tailor to your risk profile.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
