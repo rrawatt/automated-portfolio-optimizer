@@ -26,8 +26,8 @@ def generate_report(res, tickers):
   report = ""
 
   for i in range(1, len(tickers)+1):
-     report += f"| {i} | {tickers[i]} | \n"
-  
+     report += f"| {i} | {tickers[i-1]} | \n"
+
   report+="""**Correlation Matrix:**  
   ![Correlation Matrix]({plots_dir}/correl_mat.png)"""
   now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -37,7 +37,7 @@ def generate_report(res, tickers):
   
   def optires(method):
     nonlocal report  # This ensures we're modifying the outer 'report'
-    report += f"""**Key Results:*
+    report += f"""**Key Results:**
 
 | Metric                    | Value      |
 |---------------------------|------------|
